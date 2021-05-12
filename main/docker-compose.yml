@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+    backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: 'python main.py'
+        ports: 
+            - 8001:5000
+        volumes: 
+            - .:/app
+        depends_on: 
+            - main_db
+    
+    main_queue:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: 'python consumer.py'
+        depends_on:
+            - main_db
+    
+    main_db:
+        image: mysql:5.7.22
+        restart: always
+        environment: 
+            MYSQL_DATABASE: main
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - main_dbdata:/var/lib/mysql
+        ports:
+            - 33067:3306
+
+volumes:
+    main_dbdata: 
+
+networks:
+    default:
+        external: 
+            name: rabbitmq-local

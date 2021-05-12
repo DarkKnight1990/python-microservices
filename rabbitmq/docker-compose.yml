@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+    rabbitmq:
+        image: rabbitmq:3-management
+        hostname: my-rabbit
+        restart: always
+        volumes: 
+            - ./rabbitmq/etc/definitions.json:/etc/rabbitmq/definitions.json
+        ports: 
+            - 5672:5672
+            - 15672:15672
+
+networks:
+    default:
+        external: 
+            name: rabbitmq-local
